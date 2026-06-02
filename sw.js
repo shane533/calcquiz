@@ -1,7 +1,7 @@
 // 口算训练 — Service Worker
 // 策略:app shell 用 cache-first;离线时直接走缓存,在线时后台更新。
 // 升级 CACHE_VERSION 即可强制刷新缓存。
-const CACHE_VERSION = 'v1';
+const CACHE_VERSION = 'v2';
 const CACHE_NAME = `calcquiz-${CACHE_VERSION}`;
 const APP_SHELL = [
   './',

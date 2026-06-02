@@ -26,12 +26,14 @@
     body {
       display: flex;
       justify-content: center;
-      padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
     }
     #app {
       width: 100%;
       max-width: 480px;
-      min-height: 100vh;
+      min-height: 100vh;     /* fallback */
+      min-height: 100dvh;    /* iOS Safari 实际可见视口 */
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
       display: flex;
       flex-direction: column;
       background: #ffffff;
@@ -39,13 +41,31 @@
     }
     [hidden] { display: none !important; }
 
+    /* ---- 大屏(iPad/平板)卡片化:#app 限高居中,与手机视口比例一致 ---- */
+    @media (min-height: 800px) {
+      body {
+        align-items: center;
+        padding: 24px 0;
+      }
+      #app {
+        min-height: 0;
+        height: min(760px, calc(100dvh - 48px));
+        padding-top: 0;
+        padding-bottom: 0;
+        border-radius: 24px;
+        overflow-y: auto;  /* 万一历史记录多了也能滚 */
+      }
+    }
+
     /* ---- 通用 ---- */
     .view {
       flex: 1;
       display: flex;
       flex-direction: column;
-      padding: 24px 20px;
+      padding: 16px 16px 12px;
     }
+    /* 选难度页保留一点呼吸感 */
+    #view-select { padding: 24px 20px; }
     .title {
       font-size: 28px;
       font-weight: 700;
@@ -149,39 +169,54 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 8px 4px 16px;
+      padding: 4px 4px 10px;
       font-size: 16px;
       color: #6b7280;
       font-weight: 500;
     }
     .quiz-header .timer { color: #1e3a8a; font-weight: 700; font-variant-numeric: tabular-nums; }
     .quiz-header .timer.warn { color: #ef4444; }
+    /* 题目+输入区:占据键盘上方剩余空间,垂直居中 */
+    .quiz-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: stretch;
+      gap: 12px;
+      padding: 8px 0 16px;
+    }
     .question {
-      flex: 0 0 auto;
       text-align: center;
-      padding: 30px 0 16px;
-      font-size: 56px;
+      font-size: 52px;
       font-weight: 700;
       color: #1f2937;
       letter-spacing: 2px;
       font-variant-numeric: tabular-nums;
+      line-height: 1.1;
     }
     .input-display {
       text-align: center;
       min-height: 60px;
-      font-size: 44px;
+      font-size: 40px;
       font-weight: 600;
       color: #3b82f6;
       letter-spacing: 4px;
-      padding: 4px 0 24px;
       font-variant-numeric: tabular-nums;
+      padding: 10px 16px;
+      margin: 0 auto;
+      min-width: 140px;
+      background: #eff6ff;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-    .input-display .placeholder { color: #d1d5db; font-weight: 400; }
+    .input-display .placeholder { color: #93c5fd; font-weight: 400; }
     .keypad {
-      margin-top: auto;
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
+      gap: 8px;
     }
     .key {
       min-height: 64px;
@@ -271,8 +306,10 @@
         <span id="quiz-progress">第 1 / 20 题</span>
         <span class="timer" id="quiz-timer">10:00</span>
       </div>
-      <div class="question" id="quiz-question">— + — = ?</div>
-      <div class="input-display" id="quiz-input"><span class="placeholder">_</span></div>
+      <div class="quiz-body">
+        <div class="question" id="quiz-question">— + — = ?</div>
+        <div class="input-display" id="quiz-input"><span class="placeholder">_</span></div>
+      </div>
       <div class="keypad" id="quiz-keypad"></div>
     </div>
 
@@ -309,9 +346,11 @@
         <span id="review-progress">订正 1 / 1</span>
         <span class="timer">订正模式</span>
       </div>
-      <div class="question" id="review-question">— + — = ?</div>
-      <div class="input-display" id="review-input"><span class="placeholder">_</span></div>
-      <div class="review-feedback" id="review-feedback">&nbsp;</div>
+      <div class="quiz-body">
+        <div class="question" id="review-question">— + — = ?</div>
+        <div class="input-display" id="review-input"><span class="placeholder">_</span></div>
+        <div class="review-feedback" id="review-feedback">&nbsp;</div>
+      </div>
       <div class="keypad" id="review-keypad"></div>
     </div>
   </div>
